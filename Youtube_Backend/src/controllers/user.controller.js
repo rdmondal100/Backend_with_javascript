@@ -4,6 +4,7 @@ import { User } from "../models/user.model.js"
 import uploadOnCloudinary from "../utils/cloudinary.js"
 import { apiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken";
+import { deleteCloudinaryFile } from "../utils/deleteCloudinary.js";
 
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -308,7 +309,11 @@ const upadateUserAvatar = asyncHandler(async (req, res) => {
     throw new apiError(400, "Error while updating on  avatar")
   }
 
-  await User.findByIdAndUpdate(
+  const oldImage = User.findById(res.user?._id).avatar
+
+
+
+  const updatedDetails = await User.findByIdAndUpdate(
     res.user?._id,
     {
       $set:{
@@ -318,9 +323,15 @@ const upadateUserAvatar = asyncHandler(async (req, res) => {
     { new: true }
   ).select("-password")
 
+  if(!updatedDetails){
+    throw new apiError(400,"Error updating the avatar image")
+  }
+  await deleteCloudinaryFile(oldImage)
+
+
   return res
   .status(200)
-  .json(new apiResponse(200,user,"Update avatar successfully"))
+  .json(new apiResponse(200,updatedDetails,"Update avatar successfully"))
 
 })
 
@@ -337,7 +348,10 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     throw new apiError(400, "Error while updating on  coverImage")
   }
 
-  await User.findByIdAndUpdate(
+  const oldImage = User.findById(res.user?._id).avatar
+
+
+  const updatedDetails = await User.findByIdAndUpdate(
     res.user?._id,
     {
       $set:{
@@ -347,9 +361,15 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     { new: true }
   ).select("-password")
 
+  if(!updatedDetails){
+    throw new apiError(400,"Error updating the coverImage")
+  }
+
+  await deleteCloudinaryFile(oldImage)
+
   return res
   .status(200)
-  .json(new apiResponse(200,user,"Update coverImage successfully"))
+  .json(new apiResponse(200,updatedDetails,"Update coverImage successfully"))
 
 })
 

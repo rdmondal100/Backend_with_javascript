@@ -2,7 +2,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs/promises'; // Use fs/promises for cleaner async/await syntax
 import dotenv from 'dotenv';
-import { apiError } from './apiError';
+import { apiError } from './apiError.js';
 
 dotenv.config({ path: './.env' }); // Ensure correct path to .env file
 

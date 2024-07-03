@@ -269,9 +269,13 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 
 //get the current user
 const getCurrentUser = asyncHandler(async (req, res) => {
+  console.log(req.user)
+  if(!req.user){
+    throw new apiError(400,"Failed to get current user")
+  }
   return res
     .status(200)
-    .json(200, req.user, "current user fetched successfully")
+    .json(new apiResponse(200, req.user, "current user fetched successfully"))
 })
 
 // update account details 
